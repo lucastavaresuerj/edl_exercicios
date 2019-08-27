@@ -1,0 +1,678 @@
+swipl(1)                    General Commands Manual                   swipl(1)
+
+NAME
+       swipl - SWI-Prolog 7.6.4
+
+SYNOPSIS
+       swipl [--help|--version|--arch|--dump-runtime-variables]
+       swipl [options] prolog-file ... [--] [arg ...]
+       swipl [options] [-o output] -c file ...
+       swipl [options] [-o output] -b initfile ...
+
+       The first version provides information about the system and exits imme‐
+       diately. The second version is the primary way to call Prolog on one or
+       more  Prolog  source  file(s)  and provide arguments to the application
+       that can be requested using current_prolog_flag(argv, Argv).  The third
+       version  is used to create a saved state while the last version is used
+       for boot-compilation of the Prolog parts of the system.
+
+DESCRIPTION
+       SWI-Prolog is a comprehensive and stable implementation of  the  Prolog
+       language  with  a large set of libraries. Among its distinguishing fea‐
+       tures are mature support for multi-threading, a  mature  embedded  web-
+       server library, graphical development tools (debugger, profiler, cross-
+       referencer, editor), an  embedded  efficient  RDF  store,  support  for
+       XML/SGML/HTML  and Unicode.  More widely supported features are support
+       for constraint programming,  atom  garbage  collection,  interfaces  to
+       databases (ODBC), C, C++ and Java (JPL).
+
+       SWI-Prolog implements the ISO core standard. Many of its extensions are
+       largely compatible to YAP and SICStus Prolog.
+
+       This manual page only lists the commandline options.   Full  documenta‐
+       tion  is  available  on-line as well as in HTML and PDF format from the
+       WWW home page at http://www.swi-prolog.org
+
+LICENSE INFORMATION
+       SWI-Prolog is distributed under the LGPL  (GNU  Lesser  General  Public
+       License)  for  maximal  compatibility  with the Free Software movement,
+       while allowing for use with proprietary software components.   See  the
+       SWI-Prolog home page at http://www.swi-prolog.org for details.
+
+OPTIONS
+       --help Gives a summary of the most important options.
+
+       --version
+              Displays version and architecture information.
+
+       --arch Prints the architecture identifier.
+
+       --dump-runtime-variables[=format]
+              Dump  information  that  is  generally  useful  for installation
+              scripts in a form defined by format.   Defines  formats  are  sh
+              (default,  bourne  shell) and cmd (Windows CMD).  This option is
+              used by swipl-ld (1) to fetch necessary information  about  Pro‐
+              log.   It is normally invoked as eval `swipl -dump-runtime-vari‐
+              ables`, which assigns the following shell variables:
+
+              CC     The C- compiler used to compile SWI-Prolog.
+
+              PLBASE The home directory of SWI-Prolog.  This is the same value
+                     as returned by the current_prolog_flag home.
+
+              PLARCH The  architecture  identifier used.  Together with PLBASE
+                     this defines the location  of  various  components.   For
+                     example,    the    library    for    embedding    is   in
+                     $PLBASE/lib/$PLARCH/libswipl.a
+
+              PLLIB  CC identifier to link to SWI-Prolog.  Typically -lswipl
+
+              PLLIBS Additional libraries needed for linking PLLIB
+
+              PLCFLAGS
+                     Flags that need to be passed to the C-compiler to  gener‐
+                     ate compatible code.
+
+              PLLDFLAGS
+                     Flags  that need to be passed to the C-linker for linking
+                     embedded executables.
+
+              PLSOEXT
+                     Extension used by the hosting operating system for shared
+                     objects. On most Unix systems this is "so"; on MS-Windows
+                     it is "dll".  AIX uses "o", HPUX "sl".
+
+              PLSOPATH
+                     Environment variable used by the hosting operating system
+                     to  extend the search path for shared objects.  For exam‐
+                     ple, on ELF systems this is "LD_LIBRARY_PATH" and on  MS-
+                     Windows it is "PATH".
+
+              PLVERSION
+                     Numeric representation of the SWI-Prolog version.
+
+              PLVERSIONTAG
+                     If present, a version tag such as "rc1".
+
+              PLSHARED
+                     Has  the  value  yes  if  Prolog  supports linking shared
+                     libraries using load_foreign_library/[1,2] and no  other‐
+                     wise.
+
+              PLTHREADS
+                     Has  the  value  yes  if  Prolog  was compiled for multi-
+                     threading and no otherwise.
+
+       -Gsize[kmg]
+              Sets the global stack size to size.  The default is  128  Mbytes
+              (64-bit machines: 256 Mbytes). The global stack is used to store
+              compound  terms,  floating  point  numbers,  big  integers   and
+              strings. See also the -L option.
+
+       -Lsize[kmg]
+              Sets  the local stack size to size.  The default unit is Kbytes.
+              The local stack is used to  store  environment  frames,  choice‐
+              points and foreign-language term-references. SWI-Prolog performs
+              last-call optimisation to minimize the local stack requirements.
+              If  the  argument  ends  in  m  , the argument is interpreted in
+              Mbytes. A g suffix is interpreted  in  Gbytes  (64-bit  machines
+              only).  This  flag  sets the maximum value to which the stack is
+              allowed to grow (default 128 Mbytes for the 32-bit  version  and
+              256  Mbytes for the 64-bit version). A maximum is useful to pre‐
+              vent buggy programs from claiming all the memory resources.  -L0
+              sets the limit to the highest possible value.
+
+       -O     Optimised  compilation.  See set_prolog_flag/3 in the SWI-Prolog
+              Reference Manual.
+
+       -Tsize[kmg]
+              Sets the trail stack size to size K bytes. The  default  is  128
+              Mbytes (64-bit machines: 256 Mbytes). See -L for more details.
+
+       -b initfile ... -c file ...
+              Boot  compilation.   initfile ...  are compiled by the C written
+              bootstrap compiler, file ...  by the normal Prolog compiler into
+              an intermediate code file. This option is for system maintenance
+              and is given for reference only.
+
+       -c file ...
+              Compiles file ...  into an intermediate code file.
+
+       -d level
+              Set debug level to level.  This option is for system maintenance
+              and is given for reference only.
+
+       -f file
+              Use file as initialisation file instead of `.swiplrc'. `-f none'
+              stops SWI-Prolog from searching for an initialisation file.
+
+       -F file
+              Select startup script from the SWI-Prolog home directory.   file
+              Specifies  the  base-name  of the script.  The extension is .rc.
+              The default script is deduced from  the  basename  of  the  exe‐
+              cutable,  taking all leading alphanumerical (letters, digits and
+              underscore) from the program name.  Thus if the program is named
+              swi-2.0  it will try to load the file swi.rc from the SWI-Prolog
+              home directory.  If the file does not exist, or the user has  no
+              read-access to it, the script is silently not loaded.
+
+       -s file
+              Load  file  as a script.  This option may be used from the shell
+              to make Prolog load a file before entering the toplevel.  It  is
+              also  used  to  turn  a file into an executable Prolog script on
+              Unix systems using the following first line
+
+              #!/usr/bin/swipl option ... -s
+
+       -l file
+              Load file as a script.  This is a synonym for -s that is compat‐
+              ible  with several other Prolog implementations.  If multiple -s
+              or -l arguments are provided, all specified files are loaded  in
+              the order in which they appear on the argument list.
+
+       --quiet -q
+              Operate silently.  This option suppresses all informational mes‐
+              sages.
+
+       -g goal
+              Goal is executed just before entering the top level. This option
+              may  appear  multiple times.  Goals are executed in the order of
+              appearance.  Possible choice points are pruned.  If a goal fails
+              an  error  is printed (depending on the -q flag) and the process
+              stops with exit code 1.  If a goal raises an exception the error
+              is  printed  and the process stops with exit code 2.  In no goal
+              is present version/0 is called to  write  the  welcome  message.
+              The  welcome  message  can thus be suppressed by giving -g true.
+              goal can be a complex term. In this case,  quotes  are  normally
+              needed to protect it from being expanded by the Unix shell.
+
+       -o output
+              Used  in  combination with -b or -c to determine the output file
+              for compilation.
+
+       -p alias=pathlist
+              Define a path alias for file_search_path/2.  pathlist is  a  ":"
+              separated  list  of values for the alias. See file_search_path/2
+              in the SWI-Prolog Reference Manual.
+
+       -t goal
+              Use goal as an interactive top level instead of the default goal
+              prolog/0.   goal  can  be  a complex term. If the top level goal
+              succeeds, SWI-Prolog exits with status 0. If it fails, the  exit
+              status  is  1.  This  flag  also  determines the goal started by
+              break/0 and abort/0.  If you want to stop the user from entering
+              interactive  mode, start the application with `-g goal' and give
+              `halt' as the top level.
+
+       -x bootfile
+              Start from an intermediate code file  resulting  from  a  Prolog
+              compilation  using  the  -b  or  -c  option,  or  created  using
+              qsave_program/[1,2].
+
+       [+|-]tty
+              Switches tty control (using ioctl(2)) on (+tty) or  off  (-tty).
+              Normally tty control is switched on. This default depends on the
+              installation. You may wish to switch tty control off if SWI-Pro‐
+              log  is  used from an editor such as GNU Emacs. If switched off,
+              get_single_char/1 and  the  tracer  will  wait  for  a  carriage
+              return.
+
+       --nosignals
+              Disable handling of signals.  Often used if SWI-Prolog is embed‐
+              ded in another application on Unix systems.
+
+       --sigalert= NUM
+              Use NUM for unblocking system calls.  Default is SIGUSR2.  Using
+              0 disables installing a signal handler, delaying the delivery of
+              thread signals until the blocking system call completes.
+
+       --     Stops scanning for more arguments.
+
+ENVIRONMENT VARIABLES
+       SWI_HOME_DIR
+              Location  for  finding  the  startup  file  boot64.prc  and  the
+              libraries.   Normally  discovered from the executable or config‐
+              ured default location.  Providing the value through the environ‐
+              ment  may  be needed if SWI-Prolog is embedded into another exe‐
+              cutable.
+
+ON-LINE HELP
+       SWI-Prolog has on-line help. This provides a fast lookup  and  browsing
+       facility  to  the  SWI-Prolog  Reference manual. The on-line manual can
+       show predicate definitions as well as entire sections of the manual.
+
+       help   Equivalent to help(help/1).
+
+       help(+What)
+              Show a specified part of the manual.  What is one of:
+
+              Name/Arity
+                     give help on the specified predicate
+
+              Name   give help on the named predicate with any arity  or  a  C
+                     interface function with that name.
+
+              Section
+                     display the specified section of the SWI-Prolog Reference
+                     Manual.  Section numbers are dash separated numbers: e.g.
+                     2-3 refers to section 2.3 of the manual.
+
+              If  Prolog is used together with the GUI tool XPCE, these predi‐
+              cates start a graphical interface, providing a  coherent  inter‐
+              face to help/1, apropos/1 and explain/1.
+
+FILES
+       This installation of SWI-Prolog has been configured using the configure
+       option --prefix=/usr.  If the files listed below are not at  the  indi‐
+       cated place, the installation has probably been moved.  Use
+
+       ?- current_prolog_flag(home, Home).
+
+       to find the local installation directory of SWI-Prolog.
+
+       ~/.swiplrc
+              Personal   initialisation   files  consulted  by  SWI-Prolog  on
+              startup.  If both exist .swiplrc is used.
+
+       /usr/lib/swipl-7.6.4/bin/amd64/
+              Location for the executables.
+
+       /usr/lib/swipl-7.6.4/include/
+              Location for the include files.  If  writable,  SWI-Prolog.h  is
+              also copied to /usr/include/SWI-Prolog.h.
+
+       /usr/lib/swipl-7.6.4/library/
+              SWI-Prolog user libraries.
+
+       /usr/lib/swipl-7.6.4/boot/
+              SWI-Prolog  kernel  parts  written  in Prolog.  The startup file
+              /usr/lib/swipl-7.6.4/boot64.prc may be recreated using the  com‐
+              mand from the directory /usr/lib/swipl-7.6.4:
+
+              bin/amd64/swipl -O -o boot64.prc -b boot/init.pl
+
+       /usr/lib/swipl-7.6.4/doc/packages
+              HTML and/or PDF documentation on the installed add-ons.
+
+       /usr/lib/swipl-7.6.4/boot64.prc
+              Default  startup  file.  This is a `intermediate code' file con‐
+              taining precompiled code from the boot directory.   The  -xboot‐
+              file option may be used to select a different file.
+
+       /usr/lib/swipl-7.6.4/runtime/amd64/libpl.a
+              SWI-Prolog library for embedding.  See also plld(1).
+
+SEE ALSO
+       The SWI-Prolog web-home at http://www.swi-prolog.org
+
+       Jan Wielemaker   SWI-Prolog  Reference  Manual  at  http://www.swi-pro‐
+       log.org/pldoc/index.html
+
+       Documentation on the add-on packages in /usr/lib/swipl-7.6.4/boot/doc
+
+       William F. Clocksin & Christopher S. Mellish,  Programming  in  Prolog,
+       fourth edition, Springer Verlag, Berlin 1994.
+
+       swipl-rc(1) and swipl-ld(1)
+
+WARRANTY
+       The  software  is provided as is, without warranty of any kind, express
+       or implied, including  but  not  limited  to  the  warranties  of  mer‐
+       chantability, fitness for a particular purpose and non infringement. In
+       no event shall the author or his employer be liable for any claim, dam‐
+       ages or other liability, whether in an action of contract, tort or oth‐
+       erwise, arising from, out of or in connection with the software or  the
+       use or other dealings in the software.
+
+COPYING
+       SWI-Prolog  is  distributed  under  the LGPL (GNU Lesser General Public
+       License).  The license terms are in the file COPYING or on the GNU web‐
+       site at http://www.gnu.org.
+
+COPYRIGHT
+       Copyright  (c) 1986-2015 University of Amsterdam, VU University Amster‐
+       dam
+
+AUTHOR
+       Jan Wielemaker
+
+SWI-Prolog 7                     Apr 10, 2015                         swipl(1)
+swipl(1)                    General Commands Manual                   swipl(1)
+
+NAME
+       swipl - SWI-Prolog 7.6.4
+
+SYNOPSIS
+       swipl [--help|--version|--arch|--dump-runtime-variables]
+       swipl [options] prolog-file ... [--] [arg ...]
+       swipl [options] [-o output] -c file ...
+       swipl [options] [-o output] -b initfile ...
+
+       The first version provides information about the system and exits imme‐
+       diately. The second version is the primary way to call Prolog on one or
+       more  Prolog  source  file(s)  and provide arguments to the application
+       that can be requested using current_prolog_flag(argv, Argv).  The third
+       version  is used to create a saved state while the last version is used
+       for boot-compilation of the Prolog parts of the system.
+
+DESCRIPTION
+       SWI-Prolog is a comprehensive and stable implementation of  the  Prolog
+       language  with  a large set of libraries. Among its distinguishing fea‐
+       tures are mature support for multi-threading, a  mature  embedded  web-
+       server library, graphical development tools (debugger, profiler, cross-
+       referencer, editor), an  embedded  efficient  RDF  store,  support  for
+       XML/SGML/HTML  and Unicode.  More widely supported features are support
+       for constraint programming,  atom  garbage  collection,  interfaces  to
+       databases (ODBC), C, C++ and Java (JPL).
+
+       SWI-Prolog implements the ISO core standard. Many of its extensions are
+       largely compatible to YAP and SICStus Prolog.
+
+       This manual page only lists the commandline options.   Full  documenta‐
+       tion  is  available  on-line as well as in HTML and PDF format from the
+       WWW home page at http://www.swi-prolog.org
+
+LICENSE INFORMATION
+       SWI-Prolog is distributed under the LGPL  (GNU  Lesser  General  Public
+       License)  for  maximal  compatibility  with the Free Software movement,
+       while allowing for use with proprietary software components.   See  the
+       SWI-Prolog home page at http://www.swi-prolog.org for details.
+
+OPTIONS
+       --help Gives a summary of the most important options.
+
+       --version
+              Displays version and architecture information.
+
+       --arch Prints the architecture identifier.
+
+       --dump-runtime-variables[=format]
+              Dump  information  that  is  generally  useful  for installation
+              scripts in a form defined by format.   Defines  formats  are  sh
+              (default,  bourne  shell) and cmd (Windows CMD).  This option is
+              used by swipl-ld (1) to fetch necessary information  about  Pro‐
+              log.   It is normally invoked as eval `swipl -dump-runtime-vari‐
+              ables`, which assigns the following shell variables:
+
+              CC     The C- compiler used to compile SWI-Prolog.
+
+              PLBASE The home directory of SWI-Prolog.  This is the same value
+                     as returned by the current_prolog_flag home.
+
+              PLARCH The  architecture  identifier used.  Together with PLBASE
+                     this defines the location  of  various  components.   For
+                     example,    the    library    for    embedding    is   in
+                     $PLBASE/lib/$PLARCH/libswipl.a
+
+              PLLIB  CC identifier to link to SWI-Prolog.  Typically -lswipl
+
+              PLLIBS Additional libraries needed for linking PLLIB
+
+              PLCFLAGS
+                     Flags that need to be passed to the C-compiler to  gener‐
+                     ate compatible code.
+
+              PLLDFLAGS
+                     Flags  that need to be passed to the C-linker for linking
+                     embedded executables.
+
+              PLSOEXT
+                     Extension used by the hosting operating system for shared
+                     objects. On most Unix systems this is "so"; on MS-Windows
+                     it is "dll".  AIX uses "o", HPUX "sl".
+
+              PLSOPATH
+                     Environment variable used by the hosting operating system
+                     to  extend the search path for shared objects.  For exam‐
+                     ple, on ELF systems this is "LD_LIBRARY_PATH" and on  MS-
+                     Windows it is "PATH".
+
+              PLVERSION
+                     Numeric representation of the SWI-Prolog version.
+
+              PLVERSIONTAG
+                     If present, a version tag such as "rc1".
+
+              PLSHARED
+                     Has  the  value  yes  if  Prolog  supports linking shared
+                     libraries using load_foreign_library/[1,2] and no  other‐
+                     wise.
+
+              PLTHREADS
+                     Has  the  value  yes  if  Prolog  was compiled for multi-
+                     threading and no otherwise.
+
+       -Gsize[kmg]
+              Sets the global stack size to size.  The default is  128  Mbytes
+              (64-bit machines: 256 Mbytes). The global stack is used to store
+              compound  terms,  floating  point  numbers,  big  integers   and
+              strings. See also the -L option.
+
+       -Lsize[kmg]
+              Sets  the local stack size to size.  The default unit is Kbytes.
+              The local stack is used to  store  environment  frames,  choice‐
+              points and foreign-language term-references. SWI-Prolog performs
+              last-call optimisation to minimize the local stack requirements.
+              If  the  argument  ends  in  m  , the argument is interpreted in
+              Mbytes. A g suffix is interpreted  in  Gbytes  (64-bit  machines
+              only).  This  flag  sets the maximum value to which the stack is
+              allowed to grow (default 128 Mbytes for the 32-bit  version  and
+              256  Mbytes for the 64-bit version). A maximum is useful to pre‐
+              vent buggy programs from claiming all the memory resources.  -L0
+              sets the limit to the highest possible value.
+
+       -O     Optimised  compilation.  See set_prolog_flag/3 in the SWI-Prolog
+              Reference Manual.
+
+       -Tsize[kmg]
+              Sets the trail stack size to size K bytes. The  default  is  128
+              Mbytes (64-bit machines: 256 Mbytes). See -L for more details.
+
+       -b initfile ... -c file ...
+              Boot  compilation.   initfile ...  are compiled by the C written
+              bootstrap compiler, file ...  by the normal Prolog compiler into
+              an intermediate code file. This option is for system maintenance
+              and is given for reference only.
+
+       -c file ...
+              Compiles file ...  into an intermediate code file.
+
+       -d level
+              Set debug level to level.  This option is for system maintenance
+              and is given for reference only.
+
+       -f file
+              Use file as initialisation file instead of `.swiplrc'. `-f none'
+              stops SWI-Prolog from searching for an initialisation file.
+
+       -F file
+              Select startup script from the SWI-Prolog home directory.   file
+              Specifies  the  base-name  of the script.  The extension is .rc.
+              The default script is deduced from  the  basename  of  the  exe‐
+              cutable,  taking all leading alphanumerical (letters, digits and
+              underscore) from the program name.  Thus if the program is named
+              swi-2.0  it will try to load the file swi.rc from the SWI-Prolog
+              home directory.  If the file does not exist, or the user has  no
+              read-access to it, the script is silently not loaded.
+
+       -s file
+              Load  file  as a script.  This option may be used from the shell
+              to make Prolog load a file before entering the toplevel.  It  is
+              also  used  to  turn  a file into an executable Prolog script on
+              Unix systems using the following first line
+
+              #!/usr/bin/swipl option ... -s
+
+       -l file
+              Load file as a script.  This is a synonym for -s that is compat‐
+              ible  with several other Prolog implementations.  If multiple -s
+              or -l arguments are provided, all specified files are loaded  in
+              the order in which they appear on the argument list.
+
+       --quiet -q
+              Operate silently.  This option suppresses all informational mes‐
+              sages.
+
+       -g goal
+              Goal is executed just before entering the top level. This option
+              may  appear  multiple times.  Goals are executed in the order of
+              appearance.  Possible choice points are pruned.  If a goal fails
+              an  error  is printed (depending on the -q flag) and the process
+              stops with exit code 1.  If a goal raises an exception the error
+              is  printed  and the process stops with exit code 2.  In no goal
+              is present version/0 is called to  write  the  welcome  message.
+              The  welcome  message  can thus be suppressed by giving -g true.
+              goal can be a complex term. In this case,  quotes  are  normally
+              needed to protect it from being expanded by the Unix shell.
+
+       -o output
+              Used  in  combination with -b or -c to determine the output file
+              for compilation.
+
+       -p alias=pathlist
+              Define a path alias for file_search_path/2.  pathlist is  a  ":"
+              separated  list  of values for the alias. See file_search_path/2
+              in the SWI-Prolog Reference Manual.
+
+       -t goal
+              Use goal as an interactive top level instead of the default goal
+              prolog/0.   goal  can  be  a complex term. If the top level goal
+              succeeds, SWI-Prolog exits with status 0. If it fails, the  exit
+              status  is  1.  This  flag  also  determines the goal started by
+              break/0 and abort/0.  If you want to stop the user from entering
+              interactive  mode, start the application with `-g goal' and give
+              `halt' as the top level.
+
+       -x bootfile
+              Start from an intermediate code file  resulting  from  a  Prolog
+              compilation  using  the  -b  or  -c  option,  or  created  using
+              qsave_program/[1,2].
+
+       [+|-]tty
+              Switches tty control (using ioctl(2)) on (+tty) or  off  (-tty).
+              Normally tty control is switched on. This default depends on the
+              installation. You may wish to switch tty control off if SWI-Pro‐
+              log  is  used from an editor such as GNU Emacs. If switched off,
+              get_single_char/1 and  the  tracer  will  wait  for  a  carriage
+              return.
+
+       --nosignals
+              Disable handling of signals.  Often used if SWI-Prolog is embed‐
+              ded in another application on Unix systems.
+
+       --sigalert= NUM
+              Use NUM for unblocking system calls.  Default is SIGUSR2.  Using
+              0 disables installing a signal handler, delaying the delivery of
+              thread signals until the blocking system call completes.
+
+       --     Stops scanning for more arguments.
+
+ENVIRONMENT VARIABLES
+       SWI_HOME_DIR
+              Location  for  finding  the  startup  file  boot64.prc  and  the
+              libraries.   Normally  discovered from the executable or config‐
+              ured default location.  Providing the value through the environ‐
+              ment  may  be needed if SWI-Prolog is embedded into another exe‐
+              cutable.
+
+ON-LINE HELP
+       SWI-Prolog has on-line help. This provides a fast lookup  and  browsing
+       facility  to  the  SWI-Prolog  Reference manual. The on-line manual can
+       show predicate definitions as well as entire sections of the manual.
+
+       help   Equivalent to help(help/1).
+
+       help(+What)
+              Show a specified part of the manual.  What is one of:
+
+              Name/Arity
+                     give help on the specified predicate
+
+              Name   give help on the named predicate with any arity  or  a  C
+                     interface function with that name.
+
+              Section
+                     display the specified section of the SWI-Prolog Reference
+                     Manual.  Section numbers are dash separated numbers: e.g.
+                     2-3 refers to section 2.3 of the manual.
+
+              If  Prolog is used together with the GUI tool XPCE, these predi‐
+              cates start a graphical interface, providing a  coherent  inter‐
+              face to help/1, apropos/1 and explain/1.
+
+FILES
+       This installation of SWI-Prolog has been configured using the configure
+       option --prefix=/usr.  If the files listed below are not at  the  indi‐
+       cated place, the installation has probably been moved.  Use
+
+       ?- current_prolog_flag(home, Home).
+
+       to find the local installation directory of SWI-Prolog.
+
+       ~/.swiplrc
+              Personal   initialisation   files  consulted  by  SWI-Prolog  on
+              startup.  If both exist .swiplrc is used.
+
+       /usr/lib/swipl-7.6.4/bin/amd64/
+              Location for the executables.
+
+       /usr/lib/swipl-7.6.4/include/
+              Location for the include files.  If  writable,  SWI-Prolog.h  is
+              also copied to /usr/include/SWI-Prolog.h.
+
+       /usr/lib/swipl-7.6.4/library/
+              SWI-Prolog user libraries.
+
+       /usr/lib/swipl-7.6.4/boot/
+              SWI-Prolog  kernel  parts  written  in Prolog.  The startup file
+              /usr/lib/swipl-7.6.4/boot64.prc may be recreated using the  com‐
+              mand from the directory /usr/lib/swipl-7.6.4:
+
+              bin/amd64/swipl -O -o boot64.prc -b boot/init.pl
+
+       /usr/lib/swipl-7.6.4/doc/packages
+              HTML and/or PDF documentation on the installed add-ons.
+
+       /usr/lib/swipl-7.6.4/boot64.prc
+              Default  startup  file.  This is a `intermediate code' file con‐
+              taining precompiled code from the boot directory.   The  -xboot‐
+              file option may be used to select a different file.
+
+       /usr/lib/swipl-7.6.4/runtime/amd64/libpl.a
+              SWI-Prolog library for embedding.  See also plld(1).
+
+SEE ALSO
+       The SWI-Prolog web-home at http://www.swi-prolog.org
+
+       Jan Wielemaker   SWI-Prolog  Reference  Manual  at  http://www.swi-pro‐
+       log.org/pldoc/index.html
+
+       Documentation on the add-on packages in /usr/lib/swipl-7.6.4/boot/doc
+
+       William F. Clocksin & Christopher S. Mellish,  Programming  in  Prolog,
+       fourth edition, Springer Verlag, Berlin 1994.
+
+       swipl-rc(1) and swipl-ld(1)
+
+WARRANTY
+       The  software  is provided as is, without warranty of any kind, express
+       or implied, including  but  not  limited  to  the  warranties  of  mer‐
+       chantability, fitness for a particular purpose and non infringement. In
+       no event shall the author or his employer be liable for any claim, dam‐
+       ages or other liability, whether in an action of contract, tort or oth‐
+       erwise, arising from, out of or in connection with the software or  the
+       use or other dealings in the software.
+
+COPYING
+       SWI-Prolog  is  distributed  under  the LGPL (GNU Lesser General Public
+       License).  The license terms are in the file COPYING or on the GNU web‐
+       site at http://www.gnu.org.
+
+COPYRIGHT
+       Copyright  (c) 1986-2015 University of Amsterdam, VU University Amster‐
+       dam
+
+AUTHOR
+       Jan Wielemaker
+
+SWI-Prolog 7                     Apr 10, 2015                         swipl(1)
