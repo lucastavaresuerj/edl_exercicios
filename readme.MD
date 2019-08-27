@@ -2,7 +2,7 @@
 
 ####  Lucas da Silva Pinto de Oliveira Tavares
  idade: 21
-cursando ciência da computação - UERJ
+cursando ciÃªncia da computaÃ§Ã£o - UERJ
 ##### Aprendi
 - Python
 - C
